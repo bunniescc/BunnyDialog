@@ -159,6 +159,10 @@
 .title {
     font-size: 1.5rem;
 }
+.content {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
 .button-container {
     text-align: right;
 }
