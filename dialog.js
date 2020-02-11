@@ -25,6 +25,14 @@
             this.setAttribute('title', value);
         }
 
+        get message() {
+            return this.getAttribute('message') || '';
+        }
+
+        set message(value) {
+            this.setAttribute('message', value);
+        }
+
         get ok() {
             return this.getAttribute('ok')
         }
@@ -63,7 +71,7 @@
         }
 
         static get observedAttributes() {
-            return ["visible", "title", "theme", "ok", "cancel"];
+            return ["visible", "title", "message", "theme", "ok", "cancel"];
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
@@ -103,8 +111,11 @@
                     if (newValue) b.classList.add(newValue);
                 });
             }
-            if (name === "title" && newValue && this.shadowRoot) {
+            if (name === "title" && this.shadowRoot && (newValue || newValue === "")) {
                 this.shadowRoot.querySelector(".title").textContent = newValue;
+            }
+            if (name === "message" && this.shadowRoot && (newValue || newValue === "")) {
+                this.shadowRoot.querySelector(".message").textContent = newValue;
             }
             if (name === "visible" && this.shadowRoot) {
                 if (newValue === null) {
@@ -145,22 +156,28 @@
     transition: visibility 0s linear 0s,opacity .25s 0s,transform .25s;
 }
 .modal {
-    font-size: 14px;
-    padding: 16px;
+    font-size: 1rem;
+    padding: 0.75rem;
     background-color: white;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-    border-radius: 8px;
-    min-width: 300px;
-    box-shadow: rgb(85, 85, 85) 0 0 5px;
+    border-radius: 0.25rem;
+    min-width: 18rem;
+    box-shadow: rgb(85, 85, 85) 0 0 0.5rem;
 }
 .title {
     font-size: 1.5rem;
 }
+.message {
+    font-size: 1rem;
+}
+.title:not(:empty) + .message{
+    margin-top: 0.5rem;
+}
 .content {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     margin-bottom: 1rem;
 }
 .button-container {
@@ -173,6 +190,7 @@
 <div class='${wrapperClass}'>
     <div class='modal'>
         <span class='title'>${this.title}</span>
+        <div class="message">${this.message}</div>
         <div class='content'>
             <slot></slot>
         </div>
