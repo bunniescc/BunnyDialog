@@ -49,6 +49,14 @@
             this.setAttribute('theme', value);
         }
 
+        get cappuccino() {
+            return this.getAttribute('cappuccino') || 'https://c.bunnies.cc/src/cappuccino.css';
+        }
+
+        set cappuccino(value) {
+            this.setAttribute('cappuccino', value);
+        }
+
         connectedCallback() {
             this._render();
             this._attachEventHandlers();
@@ -115,7 +123,7 @@
             const yesBtn = this.ok ? `<button class='ok bcu btn ${this.theme}'>${this.ok}</button>` : '';
             const cancelBtn = this.cancel ? `<button class='cancel bcu btn outline ${this.theme}'>${this.cancel}</button>` : '';
             container.innerHTML = `
-<link rel="stylesheet" href="https://c.bunnies.cc/src/cappuccino.css">
+<link rel="stylesheet" href="${this.cappuccino}">
 <style>
 .wrapper {
     position: fixed;
@@ -153,6 +161,9 @@
 }
 .button-container {
     text-align: right;
+}
+.bcu.btn + .bcu.btn{
+    margin-left: 0.25rem;
 }
 </style>
 <div class='${wrapperClass}'>
