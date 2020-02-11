@@ -41,13 +41,21 @@
             this.setAttribute('cancel', value);
         }
 
+        get theme() {
+            return this.getAttribute('theme') || '';
+        }
+
+        set theme(value) {
+            this.setAttribute('theme', value);
+        }
+
         connectedCallback() {
             this._render();
             this._attachEventHandlers();
         }
 
         static get observedAttributes() {
-            return ["visible", "title", "ok", "cancel"];
+            return ["visible", "title", "theme", "ok", "cancel"];
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
@@ -55,7 +63,7 @@
                 let $btn = this.shadowRoot.querySelector('.ok');
                 if (!$btn) {
                     $btn = document.createElement('button');
-                    $btn.classList.add('ok');
+                    $btn.classList.add('ok', 'bcu', 'btn', this.theme);
                     $btn.addEventListener('click', e => this.close('ok'));
                     this.shadowRoot.querySelector('.button-container').prepend($btn);
                 }
@@ -70,7 +78,7 @@
                 let $btn = this.shadowRoot.querySelector('.cancel');
                 if (!$btn) {
                     $btn = document.createElement('button');
-                    $btn.classList.add('cancel');
+                    $btn.classList.add('cancel', 'bcu', 'btn', 'outline', this.theme);
                     $btn.addEventListener('click', e => this.close('cancel'));
                     this.shadowRoot.querySelector('.button-container').append($btn);
                 }
@@ -80,6 +88,12 @@
                     $btn.innerText = newValue;
                     $btn.style.display = '';
                 }
+            }
+            if (name === "theme" && this.shadowRoot) {
+                this.shadowRoot.querySelectorAll(".bcu.btn").forEach(b => {
+                    if (oldValue) b.classList.remove(oldValue);
+                    if (newValue) b.classList.add(newValue);
+                });
             }
             if (name === "title" && newValue && this.shadowRoot) {
                 this.shadowRoot.querySelector(".title").textContent = newValue;
@@ -98,9 +112,10 @@
         _render() {
             const wrapperClass = this.visible ? "wrapper visible" : "wrapper";
             const container = document.createElement("div");
-            const yesBtn = this.ok ? `<button class='ok'>${this.ok}</button>` : '';
-            const cancelBtn = this.cancel ? `<button class='cancel'>${this.cancel}</button>` : '';
+            const yesBtn = this.ok ? `<button class='ok bcu btn ${this.theme}'>${this.ok}</button>` : '';
+            const cancelBtn = this.cancel ? `<button class='cancel bcu btn outline ${this.theme}'>${this.cancel}</button>` : '';
             container.innerHTML = `
+<link rel="stylesheet" href="https://c.bunnies.cc/src/cappuccino.css">
 <style>
 .wrapper {
     position: fixed;
@@ -113,7 +128,7 @@
     visibility: hidden;
     transform: scale(1.1);
     transition: visibility 0s linear .25s,opacity .25s 0s,transform .25s;
-    z-index: 1;
+    z-index: 100;
 }
 .visible {
     opacity: 1;
@@ -134,42 +149,10 @@
     box-shadow: rgb(85, 85, 85) 0 0 5px;
 }
 .title {
-    font-size: 18px;
+    font-size: 1.5rem;
 }
 .button-container {
     text-align: right;
-}
-button {
-    padding: 6px 4px;
-    border-radius: 5px;
-    border: lightgray 1px solid;
-    background: lightgrey;
-    color: white;
-    font-size: 12px;
-    width: 55px;
-    margin: 6px 4px;
-    outline: none;
-}
-button:hover {
-    border: gray 1px solid;
-    background: gray;
-}
-button:active {
-    border: gray 1px solid;
-    background: gray;
-}
-button.ok{
-    border: deepskyblue 1px solid;
-    background: deepskyblue;
-}
-button:hover.ok {
-    border: dodgerblue 1px solid;
-    background: dodgerblue;
-    outline: none;
-}
-button:active.ok {
-    border: lightblue 1px solid;
-    background: lightblue;
 }
 </style>
 <div class='${wrapperClass}'>
